@@ -11,11 +11,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("books")
 public class BookController {
     @Autowired
     private BookRepository bookRepository;
+    private HashMap<String, String> errorMessage;
+
+    public BookController(BookRepository bookRepository){
+        this.bookRepository = bookRepository;
+        this.errorMessage= new HashMap<>();
+        errorMessage.put("message", "Failed");
+    }
 
     @GetMapping
     public ResponseEntity<BookListResponse> getAllBooks() {
@@ -35,5 +44,22 @@ public class BookController {
         BookResponse bookResponse = new BookResponse();
         bookResponse.set(book);
         return ResponseEntity.ok(bookResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Response<?>> putById(@PathVariable int id, @RequestBody Book book){
+        Book id_book = bookRepository.findById(id).orElse(null);
+        if (id_book == null){
+            ErrorResponse error = new ErrorResponse();
+            error.set("not found");
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+
+        id_book.setInfo(book);
+
+        BookResponse bookResponse = new BookResponse();
+        bookResponse.set(id_book);
+        return ResponseEntity.ok(bookResponse);
+
     }
 }

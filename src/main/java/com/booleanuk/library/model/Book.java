@@ -35,4 +35,12 @@ public class Book {
         this.year = year;
         this.genre = genre;
     }
+
+    public void setInfo(Book b){
+        title = b.getTitle();
+        author = b.getAuthor();
+        publisher = b.getPublisher();
+        year = b.getYear();
+        genre = b.getGenre();
+    }
 }
